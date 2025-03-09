@@ -1,8 +1,16 @@
+//
+//
+//
 // import 'package:flutter/material.dart';
-//
+// import 'package:firebase_core/firebase_core.dart';
+// import 'firebase_options.dart';
 // import 'employee_list_screen.dart';
+// import 'model_connection.dart';
 //
-// void main() {
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await Firebase.initializeApp();
 //   runApp(const MyApp());
 // }
 //
@@ -19,18 +27,20 @@
 // }
 //
 // class SignInScreen extends StatefulWidget {
+//   const SignInScreen({super.key});
+//
 //   @override
 //   _SignInScreenState createState() => _SignInScreenState();
 // }
-//
+// final String backendUrl = 'http://192.168.147.174:5000';
 // class _SignInScreenState extends State<SignInScreen> {
 //   final TextEditingController emailController = TextEditingController();
 //   final TextEditingController passwordController = TextEditingController();
 //
 //   // Predefined users
 //   final Map<String, String> predefinedUsers = {
-//     "rohan@gmail.com": "rohan123",
 //     "ayush@gmail.com": "ayush123",
+//     "rohan@gmail.com": "rohan123",
 //   };
 //
 //   void signIn() {
@@ -125,30 +135,21 @@
 //   }
 // }
 //
-// // // Home Page (Redirects after successful login)
-// // class HomePage extends StatelessWidget {
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return Scaffold(
-// //       appBar: AppBar(title: Text("Home Page")),
-// //       body: Center(
-// //         child: Text("Welcome to the Home Page!", style: TextStyle(fontSize: 20)),
-// //       ),
-// //     );
-// //   }
-// // }
+
+
+
 
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-// import 'firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'firebase_options.dart';
 import 'employee_list_screen.dart';
+import 'model_connection.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -164,6 +165,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// 🔹 Flask Backend URL
+final String backendUrl = 'http://192.168.147.174:5000';
+
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
 
@@ -174,18 +178,23 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool isLoading = false;
 
-  // Predefined users
-  final Map<String, String> predefinedUsers = {
-    "ayush@gmail.com": "ayush123",
-    "rohan@gmail.com": "rohan123",
-  };
-
-  void signIn() {
+  // 🔹 Firebase Authentication Function
+  void signIn() async {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
 
-    if (predefinedUsers.containsKey(email) && predefinedUsers[email] == password) {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Login Successful!"))
       );
@@ -194,14 +203,27 @@ class _SignInScreenState extends State<SignInScreen> {
       Future.delayed(Duration(seconds: 1), () {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => EmployeeListScreen()),
+          MaterialPageRoute(builder: (context) => HomeScreen1()),
         );
       });
-    } else {
+
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = "An error occurred";
+
+      if (e.code == 'user-not-found') {
+        errorMessage = "No user found for that email.";
+      } else if (e.code == 'wrong-password') {
+        errorMessage = "Wrong password provided.";
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Invalid Credentials!"))
+          SnackBar(content: Text(errorMessage))
       );
     }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -237,7 +259,9 @@ class _SignInScreenState extends State<SignInScreen> {
                 obscureText: true,
               ),
               const SizedBox(height: 10),
-              ElevatedButton(
+              isLoading
+                  ? CircularProgressIndicator()
+                  : ElevatedButton(
                 onPressed: signIn,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
@@ -246,24 +270,14 @@ class _SignInScreenState extends State<SignInScreen> {
                 child: Text("NEXT"),
               ),
               const SizedBox(height: 10),
-              Text("Or"),
-              const SizedBox(height: 10),
-              OutlinedButton.icon(
-                onPressed: () {},
-                icon: Icon(Icons.apple, color: Colors.black),
-                label: Text("Continue with Apple"),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 50),
-                ),
-              ),
-              const SizedBox(height: 10),
-              OutlinedButton.icon(
-                onPressed: () {},
-                icon: Icon(Icons.g_mobiledata, color: Colors.red),
-                label: Text("Continue with Google"),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 50),
-                ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterScreen()),
+                  );
+                },
+                child: Text("Don't have an account? Register"),
               ),
             ],
           ),
@@ -273,16 +287,93 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 }
 
-// Home Page (Redirects after successful login)
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+// 🔹 Register Screen for New Users
+class RegisterScreen extends StatefulWidget {
+  @override
+  _RegisterScreenState createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  bool isLoading = false;
+
+  void register() async {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Registration Successful!"))
+      );
+
+      Future.delayed(Duration(seconds: 1), () {
+        Navigator.pop(context);
+      });
+
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = "An error occurred";
+
+      if (e.code == 'email-already-in-use') {
+        errorMessage = "Email is already in use.";
+      } else if (e.code == 'weak-password') {
+        errorMessage = "Password should be at least 6 characters.";
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage))
+      );
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Home Page")),
-      body: Center(
-        child: Text("Welcome to the Home Page!", style: TextStyle(fontSize: 20)),
+      appBar: AppBar(title: Text("Register")),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: emailController,
+              decoration: InputDecoration(
+                labelText: "Email",
+                hintText: "Enter your email",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: passwordController,
+              decoration: InputDecoration(
+                labelText: "Password",
+                hintText: "Enter your password",
+                border: OutlineInputBorder(),
+              ),
+              obscureText: true,
+            ),
+            const SizedBox(height: 10),
+            isLoading
+                ? CircularProgressIndicator()
+                : ElevatedButton(
+              onPressed: register,
+              child: Text("Register"),
+            ),
+          ],
+        ),
       ),
     );
   }

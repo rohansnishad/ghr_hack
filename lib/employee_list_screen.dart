@@ -224,19 +224,224 @@
 
 
 
+//
+// import 'package:flutter/material.dart';
+// import 'alert_screen.dart';
+//
+// class EmployeeListScreen extends StatefulWidget {
+//   const EmployeeListScreen({super.key});
+//
+//   @override
+//   _EmployeeListScreenState createState() => _EmployeeListScreenState();
+// }
+//
+// class _EmployeeListScreenState extends State<EmployeeListScreen> {
+//   List<String> employeeNames = ['Vedant', 'Rohan'];
+//   List<String> filteredEmployees = [];
+//   final TextEditingController _nameController = TextEditingController();
+//   final TextEditingController _searchController = TextEditingController();
+//
+//   bool jacketAssigned = false;
+//   bool helmetAssigned = false;
+//   bool shoesAssigned = false;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     filteredEmployees = List.from(employeeNames);
+//     _searchController.addListener(_filterEmployees);
+//   }
+//
+//   void _filterEmployees() {
+//     setState(() {
+//       filteredEmployees = employeeNames
+//           .where((name) => name.toLowerCase().contains(_searchController.text.toLowerCase()))
+//           .toList();
+//     });
+//   }
+//
+//   void _showAddEmployeeDialog() {
+//     _nameController.clear();
+//     jacketAssigned = false;
+//     helmetAssigned = false;
+//     shoesAssigned = false;
+//
+//     showDialog(
+//       context: context,
+//       builder: (BuildContext context) {
+//         return StatefulBuilder(builder: (context, setState) {
+//           return AlertDialog(
+//             title: Text('Add Employee'),
+//             content: SingleChildScrollView(
+//               child: Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   TextField(
+//                     controller: _nameController,
+//                     decoration: InputDecoration(
+//                       labelText: 'Employee Name',
+//                       border: OutlineInputBorder(
+//                         borderRadius: BorderRadius.circular(8),
+//                       ),
+//                     ),
+//                   ),
+//                   SizedBox(height: 16),
+//                   Text(
+//                     'PPE Assign:',
+//                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+//                   ),
+//                   CheckboxListTile(
+//                     title: Text('Jacket'),
+//                     value: jacketAssigned,
+//                     onChanged: (bool? value) {
+//                       setState(() => jacketAssigned = value ?? false);
+//                     },
+//                   ),
+//                   CheckboxListTile(
+//                     title: Text('Helmet'),
+//                     value: helmetAssigned,
+//                     onChanged: (bool? value) {
+//                       setState(() => helmetAssigned = value ?? false);
+//                     },
+//                   ),
+//                   CheckboxListTile(
+//                     title: Text('Shoes'),
+//                     value: shoesAssigned,
+//                     onChanged: (bool? value) {
+//                       setState(() => shoesAssigned = value ?? false);
+//                     },
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             actions: [
+//               TextButton(
+//                 child: Text('Cancel'),
+//                 onPressed: () => Navigator.of(context).pop(),
+//               ),
+//               ElevatedButton(
+//                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+//                 child: Text('Add'),
+//                 onPressed: () {
+//                   if (_nameController.text.isNotEmpty) {
+//                     setState(() {
+//                       employeeNames.insert(0, _nameController.text);
+//                       _filterEmployees();
+//                     });
+//                     Navigator.of(context).pop();
+//                   }
+//                 },
+//               ),
+//             ],
+//           );
+//         });
+//       },
+//     );
+//   }
+//
+//   void _deleteEmployee(String name) {
+//     setState(() {
+//       employeeNames.remove(name);
+//       _filterEmployees();
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         backgroundColor: Colors.white,
+//         elevation: 0,
+//         centerTitle: true,
+//         title: Text(
+//           'LifeLine',
+//           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
+//         ),
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Text(
+//               'Employee list',
+//               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+//             ),
+//             SizedBox(height: 16),
+//             TextField(
+//               controller: _searchController,
+//               decoration: InputDecoration(
+//                 hintText: 'Search',
+//                 prefixIcon: Icon(Icons.search, color: Colors.grey),
+//                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+//               ),
+//             ),
+//             SizedBox(height: 20),
+//             Expanded(
+//               child: ListView.builder(
+//                 itemCount: filteredEmployees.length,
+//                 itemBuilder: (context, index) {
+//                   String name = filteredEmployees[index];
+//                   bool isHighlighted = name.toLowerCase().contains(_searchController.text.toLowerCase());
+//
+//                   return ListTile(
+//                     leading: CircleAvatar(
+//                       radius: 25,
+//                       backgroundColor: Color(0xFFF5E6FF),
+//                       child: Icon(Icons.person, color: Colors.blue),
+//                     ),
+//                     title: Text(
+//                       name,
+//                       style: TextStyle(
+//                         fontWeight: FontWeight.bold,
+//                         color: isHighlighted ? Colors.blue : Colors.black,
+//                       ),
+//                     ),
+//                     onTap: () {
+//                       Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                           builder: (context) => AlertScreen(
+//                             employeeName: name,
+//                           ),
+//                         ),
+//                       );
+//                     },
+//                     onLongPress: () {
+//                       _deleteEmployee(name);
+//                     },
+//                   );
+//                 },
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//       floatingActionButton: FloatingActionButton(
+//         backgroundColor: Colors.blue,
+//         onPressed: _showAddEmployeeDialog,
+//         child: Icon(Icons.add, color: Colors.white),
+//       ),
+//       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+//     );
+//   }
+// }
+
 
 import 'package:flutter/material.dart';
-import 'alert_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
+
+
 
 class EmployeeListScreen extends StatefulWidget {
-  const EmployeeListScreen({super.key});
-
   @override
   _EmployeeListScreenState createState() => _EmployeeListScreenState();
 }
 
 class _EmployeeListScreenState extends State<EmployeeListScreen> {
-  List<String> employeeNames = ['Vedant', 'Rohan'];
+  List<String> employeeNames = [];
   List<String> filteredEmployees = [];
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
@@ -248,8 +453,8 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
   @override
   void initState() {
     super.initState();
-    filteredEmployees = List.from(employeeNames);
     _searchController.addListener(_filterEmployees);
+    _fetchEmployees();
   }
 
   void _filterEmployees() {
@@ -260,7 +465,20 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
     });
   }
 
-  void _showAddEmployeeDialog() {
+  void _fetchEmployees() {
+    DatabaseReference dbRef = FirebaseDatabase.instance.ref("employees");
+    dbRef.onValue.listen((DatabaseEvent event) {
+      if (event.snapshot.value != null) {
+        Map<dynamic, dynamic> data = event.snapshot.value as Map<dynamic, dynamic>;
+        setState(() {
+          employeeNames = data.values.map((e) => e["name"].toString()).toList();
+          _filterEmployees();
+        });
+      }
+    });
+  }
+
+  void _addEmployee() {
     _nameController.clear();
     jacketAssigned = false;
     helmetAssigned = false;
@@ -269,78 +487,110 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return StatefulBuilder(builder: (context, setState) {
-          return AlertDialog(
-            title: Text('Add Employee'),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Employee Name',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Add Employee'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        labelText: 'Employee Name',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'PPE Assign:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  CheckboxListTile(
-                    title: Text('Jacket'),
-                    value: jacketAssigned,
-                    onChanged: (bool? value) {
-                      setState(() => jacketAssigned = value ?? false);
-                    },
-                  ),
-                  CheckboxListTile(
-                    title: Text('Helmet'),
-                    value: helmetAssigned,
-                    onChanged: (bool? value) {
-                      setState(() => helmetAssigned = value ?? false);
-                    },
-                  ),
-                  CheckboxListTile(
-                    title: Text('Shoes'),
-                    value: shoesAssigned,
-                    onChanged: (bool? value) {
-                      setState(() => shoesAssigned = value ?? false);
-                    },
-                  ),
-                ],
+                    SizedBox(height: 16),
+                    Text('PPE Assign:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    CheckboxListTile(
+                      title: Text('Jacket'),
+                      value: jacketAssigned,
+                      onChanged: (bool? value) {
+                        setState(() => jacketAssigned = value ?? false);
+                      },
+                    ),
+                    CheckboxListTile(
+                      title: Text('Helmet'),
+                      value: helmetAssigned,
+                      onChanged: (bool? value) {
+                        setState(() => helmetAssigned = value ?? false);
+                      },
+                    ),
+                    CheckboxListTile(
+                      title: Text('Shoes'),
+                      value: shoesAssigned,
+                      onChanged: (bool? value) {
+                        setState(() => shoesAssigned = value ?? false);
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-            actions: [
-              TextButton(
-                child: Text('Cancel'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                child: Text('Add'),
-                onPressed: () {
-                  if (_nameController.text.isNotEmpty) {
-                    setState(() {
-                      employeeNames.insert(0, _nameController.text);
-                      _filterEmployees();
-                    });
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
-            ],
-          );
-        });
+              actions: [
+                TextButton(
+                  child: Text('Cancel'),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                  child: Text('Add'),
+                  onPressed: () {
+                    if (_nameController.text.isNotEmpty) {
+                      String employeeName = _nameController.text;
+
+                      DatabaseReference dbRef = FirebaseDatabase.instance.ref("employees").push();
+                      dbRef.set({
+                        "name": employeeName,
+                        "jacket": jacketAssigned,
+                        "helmet": helmetAssigned,
+                        "shoes": shoesAssigned,
+                      }).then((_) {
+                        print("Employee added successfully!");
+                      }).catchError((error) {
+                        print("Failed to add employee: $error");
+                      });
+
+                      Navigator.of(context).pop();
+                    }
+                  },
+                ),
+              ],
+            );
+          },
+        );
       },
     );
   }
 
   void _deleteEmployee(String name) {
+    DatabaseReference dbRef = FirebaseDatabase.instance.ref("employees");
+
+    dbRef.once().then((DatabaseEvent event) {
+      if (event.snapshot.value != null) {
+        Map<dynamic, dynamic> data = event.snapshot.value as Map<dynamic, dynamic>;
+        String? keyToDelete;
+
+        data.forEach((key, value) {
+          if (value["name"] == name) {
+            keyToDelete = key;
+          }
+        });
+
+        if (keyToDelete != null) {
+          dbRef.child(keyToDelete!).remove().then((_) {
+            print("Employee deleted from Firebase");
+          }).catchError((error) {
+            print("Failed to delete employee: $error");
+          });
+        }
+      }
+    });
+
     setState(() {
       employeeNames.remove(name);
       _filterEmployees();
@@ -364,10 +614,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Employee list',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
-            ),
+            Text('Employee List', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
             SizedBox(height: 16),
             TextField(
               controller: _searchController,
@@ -398,16 +645,6 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                         color: isHighlighted ? Colors.blue : Colors.black,
                       ),
                     ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AlertScreen(
-                            employeeName: name,
-                          ),
-                        ),
-                      );
-                    },
                     onLongPress: () {
                       _deleteEmployee(name);
                     },
@@ -420,10 +657,32 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue,
-        onPressed: _showAddEmployeeDialog,
+        onPressed: _addEmployee,
         child: Icon(Icons.add, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

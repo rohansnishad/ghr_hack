@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1059727462077",
+    "firebase_url": "https://ghrhack-b3e22-default-rtdb.firebaseio.com",
+    "project_id": "ghrhack-b3e22",
+    "storage_bucket": "ghrhack-b3e22.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1059727462077:android:f41bb6ad0d172da64171d4",
+        "android_client_info": {
+          "package_name": "com.example.ghr_hack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1059727462077-u5461suhijibsl615fpqms3lcjuu7t9o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSIbQnYWVcTQrj4OtUKUlnEAFeuIfYoQ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1059727462077-u5461suhijibsl615fpqms3lcjuu7t9o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1059727462077-bsnkcbbt8o3gdugsnuehv0shnipkvrti.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.ghrHack"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
